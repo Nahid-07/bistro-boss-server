@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.BISTRO_DB}:${process.env.BISTRO_DB_PASS}@cluster0.ugpmzsn.mongodb.net/?retryWrites=true&w=majority`;
 const port = process.env.PORT || 5000;
 
@@ -61,6 +61,14 @@ async function run() {
       console.log(cartData);
       res.send(cartData);
     });
+    
+    // delete order from the user cart
+    app.delete('/cart/:id', async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id : new ObjectId(id) };
+      const result = await cartCollection.deleteOne(query);
+      res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
