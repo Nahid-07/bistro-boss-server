@@ -75,6 +75,12 @@ async function run() {
        const result = await userCollection.insertOne(userData);
        res.send(result)
     })
+    // users get api
+    app.get('/users', async(req,res)=>{
+      const query = {};
+      const result = await userCollection.find(query).toArray();
+      res.send(result)  
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
