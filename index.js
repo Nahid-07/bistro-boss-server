@@ -80,6 +80,19 @@ async function run() {
       const query = {};
       const result = await userCollection.find(query).toArray();
       res.send(result)  
+    });
+
+    // create admin api 
+    app.patch('/users/admin/:id', async(req,res)=>{
+      const id = req.params.id;
+      const filter = {_id : new ObjectId(id)};
+      const updateDoc = {
+        $set: {
+          role: 'admin'
+        },
+      };
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.send(result)
     })
 
     // Send a ping to confirm a successful connection
