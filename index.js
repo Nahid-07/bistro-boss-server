@@ -5,6 +5,7 @@ require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.BISTRO_DB}:${process.env.BISTRO_DB_PASS}@cluster0.ugpmzsn.mongodb.net/?retryWrites=true&w=majority`;
 const port = process.env.PORT || 5000;
+const jwt = require('jsonwebtoken')
 
 // middlewares
 app.use(cors());
@@ -57,7 +58,6 @@ async function run() {
      }
      const query = {userEmail : email}
       const cartData = await cartCollection.find(query).toArray();
-      console.log(cartData);
       res.send(cartData);
     });
     
@@ -101,6 +101,12 @@ async function run() {
       const query = {_id : new ObjectId(id)};
       const result = await userCollection.deleteOne(query);
       res.send(result)
+    });
+    // JWT ASSIGN
+    app.post('/jwt',(req,res)=>{
+        const user = req.body;
+        const token = jwt.sign({user},process.env.ACCESS_TOKEN,{ expiresIn: '1h' } )
+        res.send(token)
     })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
