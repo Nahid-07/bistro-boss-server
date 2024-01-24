@@ -16,11 +16,11 @@ app.get("/", (req, res) => {
 
 // JWT verify 
 const jwtVerify = (req,res,next) =>{
-  const authorization = req.body;
+  const authorization = req.headers.authorization;
   if(!authorization){
     return res.status(401).send({error : true, message: "Unauthorized access"})
   };
-  const token = authorization.split(' ')[1];
+  const token = authorization.split(" ")[1];
   jwt.verify(token, process.env.ACCESS_TOKEN, (err, decode)=>{
     if(err){
       return res.status(401).send({error : true, message: "Unauthorized access"})
@@ -67,8 +67,12 @@ async function run() {
       res.send(result);
     });
     // get cart item
-    app.get("/cart", async (req, res) => {
+    app.get("/cart", jwtVerify, async (req, res) => {
      const email = req.query.email;
+     const decodeEmail = req.decode.email;
+     if(email !== decodeEmail){
+        return res.status(401).send({error : true, message: "Unauthorized access"})
+     }
      if(!email){
       res.send([])
      }
