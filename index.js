@@ -14,6 +14,22 @@ app.get("/", (req, res) => {
   res.send("boss server is running");
 });
 
+// JWT verify 
+const jwtVerify = (req,res,next) =>{
+  const authorization = req.body;
+  if(!authorization){
+    return res.status(401).send({error : true, message: "Unauthorized access"})
+  };
+  const token = authorization.split(' ')[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN, (err, decode)=>{
+    if(err){
+      return res.status(401).send({error : true, message: "Unauthorized access"})
+    }
+    req.decode = decode;
+    next()
+  })
+}
+
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
