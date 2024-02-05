@@ -111,6 +111,12 @@ async function run() {
       const admin = { admin: result?.role === "admin" };
       res.send(admin);
     });
+    // menu items add api 
+    app.post('/add-items', async(req, res)=>{
+      const data = req.body;
+      const result = await menuCollection.insertOne(data);
+      res.send(result)
+    })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
